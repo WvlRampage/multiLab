@@ -28,12 +28,21 @@ export default (props) => {
     try {
       const snapshot =  await firebase.firestore().collection('users').get(); 
       await snapshot.forEach((doc) => {
-        let obj = {user:doc.data().user, email:doc.data().email, password:doc.data().password};
+        let obj = {id:doc.id, user:doc.data().user, email:doc.data().email, password:doc.data().password};
             vector.push(obj) 
         }); 
         setLista(vector); 
        } catch (error) {   }
    }
+
+   const clear = async (id) => {
+       console.log(id)
+    try {
+         await firebase.firestore().collection('users').doc(id).delete();  
+    } catch (error) {  }
+      list();
+  }
+
   
   
 
@@ -51,7 +60,7 @@ export default (props) => {
             <>
                 <p>Bienvenido {user.email}</p>
                 {lista.map(item => (                    
-                     <Table striped bordered hover key={item.email}>
+                     <Table striped bordered hover responsive key={item.email}>
                      <thead>
                        <tr>
                          <th>Usuario</th>
@@ -65,7 +74,7 @@ export default (props) => {
                          <td>{item.user}</td>
                          <td>{item.email}</td>
                          <td>{item.password}</td>
-                         <td><button>edit</button></td>
+                         <td><button onClick={() => clear(item.id)}>Eliminar</button></td>
                        </tr>                                            
                      </tbody>
                    </Table>
